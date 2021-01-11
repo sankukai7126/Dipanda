@@ -23,6 +23,40 @@ def seuil(img):
                 img_thres[y][x] = 255
     return img_thres
 
+def imgSum(img1, img2):
+    h = img1.shape[0]
+    w = img1.shape[1]
+    h2 = img2.shape[0]
+    w2 = img2.shape[1]
+    if h==h2 and w==w2:
+        img_sum= np.zeros((h,w))
+        for y in range(0, h):
+            for x in range(0, w):
+                if img1[y][x] + img2[y][x] >= 255:
+                    img_sum[y][x] = 255
+                else:
+                    img_sum[y][x] = 0
+        return img_sum
+    else:
+        print("Veuiller prendre deux images de même taille")
+
+def imgSoust(img1, img2):
+    h = img1.shape[0]
+    w = img1.shape[1]
+    h2 = img2.shape[0]
+    w2 = img2.shape[1]
+    if h==h2 and w==w2:
+        img_soust= np.zeros((h,w))
+        for y in range(0, h):
+            for x in range(0, w):
+                if img1[y][x] - img2[y][x] <= 0:
+                    img_soust[y][x] = 0
+                else:
+                    img_soust[y][x] = 255
+        return img_soust
+    else:
+        print("Veuiller prendre deux images de même taille")
+
 if __name__ == "__main__":
     img = imread("D:/VS/Dipanda/test.png")
     img = convertToGray(img)
