@@ -5,9 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def convertToGray(img):
-    gray = lambda rgb : np.dot(rgb[... , :3] , [0.299 , 0.587, 0.114]) 
-    gray = gray(img)  
-    return gray
+    return np.dot(img[...,:3], [0.2989, 0.5870, 0.1140])
 
 def seuil(img):
     h = img.shape[0]
