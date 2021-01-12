@@ -76,6 +76,8 @@ def Erosion(im, erodeOrder, imgPath):
             else:
                 se[i][j] = 255
 
+    # se = [[0,255,0],[255,255,255],[0,255,0]]
+
     rows,columns = im.shape[0], im.shape[1]
     #Initialize counters (Just to keep track)
     fit = 0
@@ -86,6 +88,7 @@ def Erosion(im, erodeOrder, imgPath):
     ero = np.copy(im)
     #Specify kernel size (w*w)
     w = erodeOrder
+    # w=3
 
     #
     for i in range(rows-w-1):
@@ -125,7 +128,6 @@ def Erosion(im, erodeOrder, imgPath):
                 elif(matches < blacks):
                     #Hit
                     hit = hit+1
-                    ##PROBABLE ERROR IN HERE##
                     ero[i+a][j+b] = np.all(img[se==255]) * 255
             #If no pixel match just pass
             else:
@@ -145,6 +147,8 @@ def Dilatation(im, dilateOrder, imgPath):
             else:
                 se[i][j] = 255
 
+    # se = [[0,255,0],[255,255,255],[0,255,0]]
+
     rows,columns = im.shape[0], im.shape[1]
     #Initialize counters (Just to keep track)
     fit = 0
@@ -155,6 +159,8 @@ def Dilatation(im, dilateOrder, imgPath):
     dil = np.copy(im)
     #Specify kernel size (w*w)
     w = dilateOrder
+    # w = 3
+
 
     #
     for i in range(rows-w-1):
@@ -194,7 +200,6 @@ def Dilatation(im, dilateOrder, imgPath):
                 elif(matches < blacks):
                     #Hit
                     hit = hit+1
-                    ##PROBABLE ERROR IN HERE##
                     dil[i+a][j+b] = np.any(img[se==255]) * 255
             #If no pixel match just pass
             else:
@@ -203,6 +208,25 @@ def Dilatation(im, dilateOrder, imgPath):
                 pass
     imwrite(os.path.dirname(imgPath) + "/dilate.png", dil)
     return dil
+
+def Ouverture(img, Order, imgPath):
+    img_Ouverte = Erosion(Dilatation(img, Order, imgPath), Order, imgPath)
+    imwrite(os.path.dirname(imgPath) + "/Ouverte.png", img_Ouverte)
+    return img_Ouverte
+
+def Fermeture(img, Order, imgPath):
+    img_Fermee = Dilatation(Erosion(img, Order, imgPath), Order, imgPath)
+    imwrite(os.path.dirname(imgPath) + "/Fermee.png", img_Fermee)
+    return img_Fermee
+
+def Amincissement():
+    pass
+
+def Epaisissement():
+    pass
+
+def Lantuejoul(img, Order, imgPath):
+    pass
 
 def test():
     print("coucou")
@@ -230,8 +254,10 @@ if __name__ == "__main__":
     img = convertToGray(img, imgPath)
     img_seuil = seuil(img, imgPath, 128)
     print(img_seuil)
-    img_erod = Erosion(img_seuil, 10, imgPath)
-    img_dilate = Dilatation(img_seuil, 10, imgPath)
+    # img_erod = Erosion(img_seuil, 5, imgPath)
+    img_dilate = Dilatation(img_seuil, 5, imgPath)
+    img_ouv = Ouverture(img_seuil, 5, imgPath)
+    img_ferm = Fermeture(img_seuil, 5, imgPath)
     fen = createWindow()
     fen.mainloop()
     
