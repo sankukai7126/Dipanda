@@ -204,8 +204,8 @@ def Dilatation(im, erodeOrder, imgPath):
     imwrite(os.path.dirname(imgPath) + "/dilate.png", dil)
     return dil
 
-def test(str):
-    print(str)
+def test():
+    print("coucou")
 
 def createWindow():
     fenetre = Tk()
@@ -216,7 +216,7 @@ def createWindow():
     fileMenu = Menu(menubar)
 
     submenu = Menu(fileMenu)
-    submenu.add_command(label="Open")
+    submenu.add_command(label="Open", command=test)
     submenu.add_command(label="toGray")
     submenu.add_command(label="Seuil")
     submenu.add_command(label="Erode")
@@ -230,8 +230,8 @@ if __name__ == "__main__":
     img = convertToGray(img, imgPath)
     img_seuil = seuil(img, imgPath, 128)
     print(img_seuil)
-    img_erod = Erosion(img_seuil, 10, imgPath)
-    img_erod = Dilatation(img_seuil, 10, imgPath)
+    #img_erod = Erosion(img_seuil, 10, imgPath)
+    #img_dilate = Dilatation(img_seuil, 10, imgPath)
     fen = createWindow()
     fen.mainloop()
     
