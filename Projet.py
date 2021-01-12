@@ -71,7 +71,7 @@ def Erosion(im, erodeOrder, imgPath):
     se=np.zeros((erodeOrder,erodeOrder))
     for i in range(erodeOrder):
         for j in range(erodeOrder):
-            if i!=j:
+            if i==0 or j==0 or i == -1 or j == -1:
                 se[i][j] = 0
             else:
                 se[i][j] = 255
@@ -135,12 +135,12 @@ def Erosion(im, erodeOrder, imgPath):
     imwrite(os.path.dirname(imgPath) + "/erode.png", ero)
     return ero
 
-def Dilatation(im, erodeOrder, imgPath):
+def Dilatation(im, dilateOrder, imgPath):
 
-    se=np.zeros((erodeOrder,erodeOrder))
-    for i in range(erodeOrder):
-        for j in range(erodeOrder):
-            if i!=j:
+    se=np.zeros((dilateOrder,dilateOrder))
+    for i in range(dilateOrder):
+        for j in range(dilateOrder):
+            if i==0 or j==0 or i == -1 or j == -1:
                 se[i][j] = 0
             else:
                 se[i][j] = 255
@@ -154,7 +154,7 @@ def Dilatation(im, erodeOrder, imgPath):
     #Create a copy of the image to modified it´s pixel values
     dil = np.copy(im)
     #Specify kernel size (w*w)
-    w = erodeOrder
+    w = dilateOrder
 
     #
     for i in range(rows-w-1):
@@ -230,8 +230,8 @@ if __name__ == "__main__":
     img = convertToGray(img, imgPath)
     img_seuil = seuil(img, imgPath, 128)
     print(img_seuil)
-    #img_erod = Erosion(img_seuil, 10, imgPath)
-    #img_dilate = Dilatation(img_seuil, 10, imgPath)
+    img_erod = Erosion(img_seuil, 10, imgPath)
+    img_dilate = Dilatation(img_seuil, 10, imgPath)
     fen = createWindow()
     fen.mainloop()
     
