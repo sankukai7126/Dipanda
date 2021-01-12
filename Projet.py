@@ -3,6 +3,7 @@ from PIL import Image
 from cv2 import *
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 def OpenPath(path):
     return imread(path)
@@ -65,11 +66,143 @@ def imgSoust(img1, img2, imgPath):
     else:
         print("Veuiller prendre deux images de même taille")
 
-def erode(img):
-    pass
+def Erosion(im, erodeOrder, imgPath):
 
-def dilate(img):
-    pass
+    se=np.zeros((erodeOrder,erodeOrder))
+    for i in range(erodeOrder):
+        for j in range(erodeOrder):
+            if i!=j:
+                se[i][j] = 0
+            else:
+                se[i][j] = 255
+
+    rows,columns = im.shape[0], im.shape[1]
+    #Initialize counters (Just to keep track)
+    fit = 0
+    hit = 0
+    miss = 0
+
+    #Create a copy of the image to modified it´s pixel values
+    ero = np.copy(im)
+    #Specify kernel size (w*w)
+    w = erodeOrder
+
+    #
+    for i in range(rows-w-1):
+        for j in range(columns-w-1):
+            #Get a region (crop) of the image equal to kernel size
+            crop = im[i:w+i,j:w+j]
+            #Convert region of image to an array
+            img = np.array(crop)
+
+            #Get center
+            a = math.floor(w/2)
+            b = math.floor(w/2)
+            
+            #Initialize counters 
+            matches = 0
+            blacks = 0
+
+            #Count number of black pixels (0) and value matches between the two matrix
+            for x in range(w):
+                for y in range(w):
+                    #Count number of black pixels (0)
+                    if(img[x][y] == 0):
+                        blacks = blacks+1
+                        #Count number of matching pixel values between the two matrix   
+                        if (img[x][y] == se[x][y]):         
+                            matches = matches+1
+
+            #Test if structuring element fit crop image pixels
+            #If fit it does nothing because center pixel is already black
+            if(matches > 0):
+                if(matches == blacks):
+                    #Touch
+                    fit = fit + 1
+                    pass
+                #Test if structuring element hit crop image pixels
+                #If hit change ero center pixel to black
+                elif(matches < blacks):
+                    #Hit
+                    hit = hit+1
+                    ##PROBABLE ERROR IN HERE##
+                    ero[i+a][j+b] = np.all(img[se==255]) * 255
+            #If no pixel match just pass
+            else:
+                #Miss
+                miss=miss+1
+                pass
+    imwrite(os.path.dirname(imgPath) + "/erode.png", ero)
+    return ero
+
+def Dilatation(im, erodeOrder, imgPath):
+
+    se=np.zeros((erodeOrder,erodeOrder))
+    for i in range(erodeOrder):
+        for j in range(erodeOrder):
+            if i!=j:
+                se[i][j] = 0
+            else:
+                se[i][j] = 255
+
+    rows,columns = im.shape[0], im.shape[1]
+    #Initialize counters (Just to keep track)
+    fit = 0
+    hit = 0
+    miss = 0
+
+    #Create a copy of the image to modified it´s pixel values
+    dil = np.copy(im)
+    #Specify kernel size (w*w)
+    w = erodeOrder
+
+    #
+    for i in range(rows-w-1):
+        for j in range(columns-w-1):
+            #Get a region (crop) of the image equal to kernel size
+            crop = im[i:w+i,j:w+j]
+            #Convert region of image to an array
+            img = np.array(crop)
+
+            #Get center
+            a = math.floor(w/2)
+            b = math.floor(w/2)
+            
+            #Initialize counters 
+            matches = 0
+            blacks = 0
+
+            #Count number of black pixels (0) and value matches between the two matrix
+            for x in range(w):
+                for y in range(w):
+                    #Count number of black pixels (0)
+                    if(img[x][y] == 0):
+                        blacks = blacks+1
+                        #Count number of matching pixel values between the two matrix   
+                        if (img[x][y] == se[x][y]):         
+                            matches = matches+1
+
+            #Test if structuring element fit crop image pixels
+            #If fit it does nothing because center pixel is already black
+            if(matches > 0):
+                if(matches == blacks):
+                    #Touch
+                    fit = fit + 1
+                    pass
+                #Test if structuring element hit crop image pixels
+                #If hit change ero center pixel to black
+                elif(matches < blacks):
+                    #Hit
+                    hit = hit+1
+                    ##PROBABLE ERROR IN HERE##
+                    dil[i+a][j+b] = np.any(img[se==255]) * 255
+            #If no pixel match just pass
+            else:
+                #Miss
+                miss=miss+1
+                pass
+    imwrite(os.path.dirname(imgPath) + "/dilate.png", dil)
+    return dil
 
 def test(str):
     print(str)
@@ -92,11 +225,13 @@ def createWindow():
     return fenetre
 
 if __name__ == "__main__":
-    imgPath = "D:/VS/Dipanda/test.png"
+    imgPath = "D:/VS/Dipanda/Carre.png"
     img = OpenPath(imgPath)
     img = convertToGray(img, imgPath)
     img_seuil = seuil(img, imgPath, 128)
     print(img_seuil)
+    img_erod = Erosion(img_seuil, 10, imgPath)
+    img_erod = Dilatation(img_seuil, 10, imgPath)
     fen = createWindow()
     fen.mainloop()
     
