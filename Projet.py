@@ -249,7 +249,7 @@ def createWindow():
     return fenetre
 
 if __name__ == "__main__":
-    imgPath = "D:/VS/Dipanda/Carre.png"
+    imgPath = "Carre.png"
     img = OpenPath(imgPath)
     img = convertToGray(img, imgPath)
     img_seuil = seuil(img, imgPath, 128)
