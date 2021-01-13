@@ -79,17 +79,12 @@ class Traitement:
         else:
             print("Veuiller prendre deux images de même taille")
 
-    def Erosion(self,im, erodeOrder, imgPath):
+    def Erosion(self,erodeOrder):
+        
+        imgPath = self.getCheminPrincipale()
+        im=self.OpenPath(imgPath)
 
-        se=np.zeros((erodeOrder,erodeOrder))
-        for i in range(erodeOrder):
-            for j in range(erodeOrder):
-                if i==0 or j==0 or i == -1 or j == -1:
-                    se[i][j] = 0
-                else:
-                    se[i][j] = 255
-
-        # se = [[0,255,0],[255,255,255],[0,255,0]]
+        se=getStructuringElement(MORPH_ELLIPSE,(erodeOrder,erodeOrder)) * 255
 
         rows,columns = im.shape[0], im.shape[1]
         #Initialize counters (Just to keep track)
@@ -119,15 +114,8 @@ class Traitement:
                 matches = 0
                 blacks = 0
 
-                #Count number of black pixels (0) and value matches between the two matrix
-                for x in range(w):
-                    for y in range(w):
-                        #Count number of black pixels (0)
-                        if(img[x][y] == 0):
-                            blacks = blacks+1
-                            #Count number of matching pixel values between the two matrix   
-                            if (img[x][y] == se[x][y]):         
-                                matches = matches+1
+                blacks = np.count_nonzero(img == 0)
+                matches = np.count_nonzero((img == 0) & (se == 0))
 
                 #Test if structuring element fit crop image pixels
                 #If fit it does nothing because center pixel is already black
@@ -141,26 +129,21 @@ class Traitement:
                     elif(matches < blacks):
                         #Hit
                         hit = hit+1
-                        ero[i+a][j+b] = np.all(img[se==255]) * 255
+                        ero[i+a][j+b] = 0
                 #If no pixel match just pass
                 else:
                     #Miss
                     miss=miss+1
                     pass
-        imwrite(os.path.dirname(imgPath) + "/erode.png", ero)
+        imwrite(os.path.dirname(imgPath) + "/Erode.png", ero)
         return ero
 
-    def Dilatation(self,im, dilateOrder, imgPath):
+    def Dilatation(self,dilateOrder):
+        
+        imgPath = self.getCheminPrincipale()
+        im=self.OpenPath(imgPath)
 
-        se=np.zeros((dilateOrder,dilateOrder))
-        for i in range(dilateOrder):
-            for j in range(dilateOrder):
-                if i==0 or j==0 or i == -1 or j == -1:
-                    se[i][j] = 0
-                else:
-                    se[i][j] = 255
-
-        # se = [[0,255,0],[255,255,255],[0,255,0]]
+        se=getStructuringElement(MORPH_ELLIPSE,(dilateOrder,dilateOrder)) * 255
 
         rows,columns = im.shape[0], im.shape[1]
         #Initialize counters (Just to keep track)
@@ -191,15 +174,8 @@ class Traitement:
                 matches = 0
                 blacks = 0
 
-                #Count number of black pixels (0) and value matches between the two matrix
-                for x in range(w):
-                    for y in range(w):
-                        #Count number of black pixels (0)
-                        if(img[x][y] == 0):
-                            blacks = blacks+1
-                            #Count number of matching pixel values between the two matrix   
-                            if (img[x][y] == se[x][y]):         
-                                matches = matches+1
+                blacks = np.count_nonzero(img == 0)
+                matches = np.count_nonzero((img == 0) & (se == 0))
 
                 #Test if structuring element fit crop image pixels
                 #If fit it does nothing because center pixel is already black
@@ -219,7 +195,7 @@ class Traitement:
                     #Miss
                     miss=miss+1
                     pass
-        imwrite(os.path.dirname(imgPath) + "/dilate.png", dil)
+        imwrite(os.path.dirname(imgPath) + "/Dilate.png", dil)
         return dil
 
     def Ouverture(self,img, Order, imgPath):
