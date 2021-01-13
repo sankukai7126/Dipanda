@@ -79,7 +79,7 @@ class Traitement:
         else:
             print("Veuiller prendre deux images de même taille")
 
-    def Erosion(self,erodeOrder):
+    def ErosionWithPath(self,erodeOrder, canSave):
         
         imgPath = self.getCheminPrincipale()
         im=self.OpenPath(imgPath)
@@ -135,10 +135,70 @@ class Traitement:
                     #Miss
                     miss=miss+1
                     pass
-        imwrite(os.path.dirname(imgPath) + "/Erode.png", ero)
+        if canSave == True:
+            imwrite(os.path.dirname(imgPath) + "/Erode.png", ero)
+        return ero
+    
+    def Erosion(self, im, erodeOrder, canSave):
+
+        imgPath = self.getCheminPrincipale()
+
+        se=getStructuringElement(MORPH_ELLIPSE,(erodeOrder,erodeOrder)) * 255
+
+        rows,columns = im.shape[0], im.shape[1]
+        #Initialize counters (Just to keep track)
+        fit = 0
+        hit = 0
+        miss = 0
+
+        #Create a copy of the image to modified it´s pixel values
+        ero = np.copy(im)
+        #Specify kernel size (w*w)
+        w = erodeOrder
+        # w=3
+
+        #
+        for i in range(rows-w-1):
+            for j in range(columns-w-1):
+                #Get a region (crop) of the image equal to kernel size
+                crop = im[i:w+i,j:w+j]
+                #Convert region of image to an array
+                img = np.array(crop)
+
+                #Get center
+                a = math.floor(w/2)
+                b = math.floor(w/2)
+                
+                #Initialize counters 
+                matches = 0
+                blacks = 0
+
+                blacks = np.count_nonzero(img == 0)
+                matches = np.count_nonzero((img == 0) & (se == 0))
+
+                #Test if structuring element fit crop image pixels
+                #If fit it does nothing because center pixel is already black
+                if(matches > 0):
+                    if(matches == blacks):
+                        #Touch
+                        fit = fit + 1
+                        pass
+                    #Test if structuring element hit crop image pixels
+                    #If hit change ero center pixel to black
+                    elif(matches < blacks):
+                        #Hit
+                        hit = hit+1
+                        ero[i+a][j+b] = 0
+                #If no pixel match just pass
+                else:
+                    #Miss
+                    miss=miss+1
+                    pass
+        if canSave == True:
+            imwrite(os.path.dirname(imgPath) + "/Erode.png", ero)
         return ero
 
-    def Dilatation(self,dilateOrder):
+    def DilatationWithPath(self,dilateOrder, canSave):
         
         imgPath = self.getCheminPrincipale()
         im=self.OpenPath(imgPath)
@@ -195,17 +255,98 @@ class Traitement:
                     #Miss
                     miss=miss+1
                     pass
-        imwrite(os.path.dirname(imgPath) + "/Dilate.png", dil)
+        if canSave == True:
+            imwrite(os.path.dirname(imgPath) + "/Dilate.png", dil)
+        return dil
+    
+    def Dilatation(self, im, dilateOrder, canSave):
+        
+        imgPath = self.getCheminPrincipale()
+
+        se=getStructuringElement(MORPH_ELLIPSE,(dilateOrder,dilateOrder)) * 255
+
+        rows,columns = im.shape[0], im.shape[1]
+        #Initialize counters (Just to keep track)
+        fit = 0
+        hit = 0
+        miss = 0
+
+        #Create a copy of the image to modified it´s pixel values
+        dil = np.copy(im)
+        #Specify kernel size (w*w)
+        w = dilateOrder
+        # w = 3
+
+
+        #
+        for i in range(rows-w-1):
+            for j in range(columns-w-1):
+                #Get a region (crop) of the image equal to kernel size
+                crop = im[i:w+i,j:w+j]
+                #Convert region of image to an array
+                img = np.array(crop)
+
+                #Get center
+                a = math.floor(w/2)
+                b = math.floor(w/2)
+                
+                #Initialize counters 
+                matches = 0
+                blacks = 0
+
+                blacks = np.count_nonzero(img == 0)
+                matches = np.count_nonzero((img == 0) & (se == 0))
+
+                #Test if structuring element fit crop image pixels
+                #If fit it does nothing because center pixel is already black
+                if(matches > 0):
+                    if(matches == blacks):
+                        #Touch
+                        fit = fit + 1
+                        pass
+                    #Test if structuring element hit crop image pixels
+                    #If hit change ero center pixel to black
+                    elif(matches < blacks):
+                        #Hit
+                        hit = hit+1
+                        dil[i+a][j+b] = np.any(img[se==255]) * 255
+                #If no pixel match just pass
+                else:
+                    #Miss
+                    miss=miss+1
+                    pass
+        if canSave == True:
+            imwrite(os.path.dirname(imgPath) + "/Dilate.png", dil)
         return dil
 
-    def Ouverture(self,img, Order, imgPath):
-        img_Ouverte = Erosion(Dilatation(img, Order, imgPath), Order, imgPath)
-        imwrite(os.path.dirname(imgPath) + "/Ouverte.png", img_Ouverte)
+    def OuvertureWithPath(self, Order, canSave):
+        imgPath = self.getCheminPrincipale()
+        img=self.OpenPath(imgPath)
+        img_Ouverte = self.Erosion(self.Dilatation(img, Order, False), Order, False)
+        if canSave == True:
+            imwrite(os.path.dirname(imgPath) + "/Ouverte.png", img_Ouverte)
+        return img_Ouverte
+    
+    def Ouverture(self, img, Order, canSave):
+        imgPath = self.getCheminPrincipale()
+        img_Ouverte = self.Erosion(self.Dilatation(img, Order, False), Order, False)
+        if canSave == True:
+            imwrite(os.path.dirname(imgPath) + "/Ouverte.png", img_Ouverte)
         return img_Ouverte
 
-    def Fermeture(self,img, Order, imgPath):
-        img_Fermee = Dilatation(Erosion(img, Order, imgPath), Order, imgPath)
-        imwrite(os.path.dirname(imgPath) + "/Fermee.png", img_Fermee)
+    def FermetureWithPath(self, Order, canSave):
+        imgPath = self.getCheminPrincipale()
+        img=self.OpenPath(imgPath)
+        img_Fermee = self.Dilatation(self.Erosion(img, Order, False), Order, False)
+        if canSave == True:
+            imwrite(os.path.dirname(imgPath) + "/Fermee.png", img_Fermee)
+        return img_Fermee
+
+    def Fermeture(self, img, Order, canSave):
+        imgPath = self.getCheminPrincipale()
+        img_Fermee = self.Dilatation(self.Erosion(img, Order, False), Order, False)
+        if canSave == True:
+            imwrite(os.path.dirname(imgPath) + "/Fermee.png", img_Fermee)
         return img_Fermee
 
     def Amincissement(self):

@@ -46,10 +46,10 @@ if __name__=='__main__':
     #elements
     Bouton1 = Button(Frame1, text = 'sum', command = lambda: t.imgSum)
     Bouton2 = Button(Frame1, text = 'sous', command = lambda: t.imgSoust)
-    Bouton3 = Button(Frame1, text = 'erotion', command = lambda: t.Erosion(3))
-    Bouton4 = Button(Frame1, text = 'dilatation', command = lambda: t.Dilatation(3))
-    Bouton5 = Button(Frame1, text = 'ouverture', command = lambda: t.Ouverture(3))
-    Bouton6 = Button(Frame1, text = 'fermeture', command = lambda: t.Fermeture(3))
+    Bouton3 = Button(Frame1, text = 'erotion', command = lambda: t.ErosionWithPath(3,True))
+    Bouton4 = Button(Frame1, text = 'dilatation', command = lambda: t.DilatationWithPath(3,True))
+    Bouton5 = Button(Frame1, text = 'ouverture', command = lambda: t.OuvertureWithPath(3,True))
+    Bouton6 = Button(Frame1, text = 'fermeture', command = lambda: t.FermetureWithPath(3,True))
 
     Bouton1.grid(column=0, row=0,padx=(0, 10),pady=(10,10))
     Bouton2.grid(column=1, row=0,padx=(0, 10),pady=(10,10))
