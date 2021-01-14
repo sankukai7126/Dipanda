@@ -35,6 +35,8 @@ def imgSum(img1, img2, imgPath):
     w = img1.shape[1]
     h2 = img2.shape[0]
     w2 = img2.shape[1]
+    img1=convertToGray(img1,imgPath)
+    img2=convertToGray(img2,imgPath)
     if h==h2 and w==w2:
         img_sum= np.zeros((h,w))
         for y in range(0, h):
@@ -53,6 +55,8 @@ def imgSoust(img1, img2, imgPath):
     w = img1.shape[1]
     h2 = img2.shape[0]
     w2 = img2.shape[1]
+    img1=convertToGray(img1,imgPath)
+    img2=convertToGray(img2,imgPath)
     if h==h2 and w==w2:
         img_soust= np.zeros((h,w))
         for y in range(0, h):
@@ -61,7 +65,7 @@ def imgSoust(img1, img2, imgPath):
                     img_soust[y][x] = 0
                 else:
                     img_soust[y][x] = 255
-        imwrite(os.path.dirname(imgPath) + "/soust.png", img_soust)
+        imwrite(os.path.dirname(imgPath) + "/Soust.png", img_soust)
         return img_soust
     else:
         print("Veuiller prendre deux images de même taille")
@@ -249,17 +253,17 @@ def createWindow():
     return fenetre
 
 if __name__ == "__main__":
-    imgPath = "Carre.png"
+    imgPath = "D:/VS/Dipanda/Carre.png"
     img = OpenPath(imgPath)
-    img = convertToGray(img, imgPath)
-    img_seuil = seuil(img, imgPath, 128)
-    print(img_seuil)
-    # img_erod = Erosion(img_seuil, 5, imgPath)
-    img_dilate = Dilatation(img_seuil, 5, imgPath)
-    img_ouv = Ouverture(img_seuil, 5, imgPath)
-    img_ferm = Fermeture(img_seuil, 5, imgPath)
-    fen = createWindow()
-    fen.mainloop()
+    # img = convertToGray(img, imgPath)
+    # img_seuil = seuil(img, imgPath, 128)
+    # print(img_seuil)
+    # # img_erod = Erosion(img_seuil, 5, imgPath)
+    # img_dilate = Dilatation(img_seuil, 5, imgPath)
+    # img_ouv = Ouverture(img_seuil, 5, imgPath)
+    # img_ferm = Fermeture(img_seuil, 5, imgPath)
+    # fen = createWindow()
+    # fen.mainloop()
     
 
 

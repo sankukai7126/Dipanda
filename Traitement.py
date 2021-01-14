@@ -49,6 +49,8 @@ class Traitement:
         w = img1.shape[1]
         h2 = img2.shape[0]
         w2 = img2.shape[1]
+        img1=self.convertToGray(img1)
+        img2=self.convertToGray(img2)
         if h==h2 and w==w2:
             img_sum= np.zeros((h,w))
             for y in range(0, h):
@@ -68,6 +70,8 @@ class Traitement:
         w = img1.shape[1]
         h2 = img2.shape[0]
         w2 = img2.shape[1]
+        img1=self.convertToGray(img1)
+        img2=self.convertToGray(img2)
         if h==h2 and w==w2:
             img_soust= np.zeros((h,w))
             for y in range(0, h):
