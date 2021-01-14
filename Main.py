@@ -46,7 +46,7 @@ if __name__=='__main__':
     #elements
     Bouton1 = Button(Frame1, text = 'sum', command = lambda: t.imgSum)
     Bouton2 = Button(Frame1, text = 'sous', command = lambda: t.imgSoust)
-    Bouton3 = Button(Frame1, text = 'erotion', command = lambda: t.ErosionWithPath(3,True))
+    Bouton3 = Button(Frame1, text = 'erosion', command = lambda: t.ErosionWithPath(3,True))
     Bouton4 = Button(Frame1, text = 'dilatation', command = lambda: t.DilatationWithPath(3,True))
     Bouton5 = Button(Frame1, text = 'ouverture', command = lambda: t.OuvertureWithPath(3,True))
     Bouton6 = Button(Frame1, text = 'fermeture', command = lambda: t.FermetureWithPath(3,True))
