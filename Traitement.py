@@ -24,6 +24,7 @@ class Traitement:
     def convertToGray(self,img, imgPath):
         img = np.dot(img[...,:3], [0.299, 0.587, 0.114])
         imwrite(os.path.dirname(imgPath) + "/gray.png", img)
+        imshow(img)
         return img
 
     def seuil(self,img,imgPath, val_seuil):
@@ -41,6 +42,7 @@ class Traitement:
                 else:
                     img_thres[y][x] = 255
         imwrite(os.path.dirname(imgPath) + "/seuil.png", img_thres)
+        imshow(img_thres)
         return img_thres
 
     def imgSum(self,img1, img2, imgPath):
@@ -57,6 +59,7 @@ class Traitement:
                     else:
                         img_sum[y][x] = 0
             imwrite(os.path.dirname(imgPath) + "/sum.png", img_sum)
+            imshow(img_sum)
             return img_sum
         else:
             print("Veuiller prendre deux images de même taille")
@@ -75,6 +78,7 @@ class Traitement:
                     else:
                         img_soust[y][x] = 255
             imwrite(os.path.dirname(imgPath) + "/soust.png", img_soust)
+            imshow(img_soust)
             return img_soust
         else:
             print("Veuiller prendre deux images de même taille")
@@ -137,6 +141,7 @@ class Traitement:
                     pass
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Erode.png", ero)
+        imshow(ero)
         return ero
     
     def Erosion(self, im, erodeOrder, canSave):
@@ -196,6 +201,7 @@ class Traitement:
                     pass
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Erode.png", ero)
+        imshow(ero)
         return ero
 
     def DilatationWithPath(self,dilateOrder, canSave):
@@ -257,6 +263,7 @@ class Traitement:
                     pass
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Dilate.png", dil)
+        imshow(dil)
         return dil
     
     def Dilatation(self, im, dilateOrder, canSave):
@@ -317,6 +324,7 @@ class Traitement:
                     pass
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Dilate.png", dil)
+        imshow(dil)
         return dil
 
     def OuvertureWithPath(self, Order, canSave):
@@ -325,6 +333,7 @@ class Traitement:
         img_Ouverte = self.Erosion(self.Dilatation(img, Order, False), Order, False)
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Ouverte.png", img_Ouverte)
+        imshow(img_Ouverte)
         return img_Ouverte
     
     def Ouverture(self, img, Order, canSave):
@@ -332,6 +341,7 @@ class Traitement:
         img_Ouverte = self.Erosion(self.Dilatation(img, Order, False), Order, False)
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Ouverte.png", img_Ouverte)
+        imshow(img_Ouverte)
         return img_Ouverte
 
     def FermetureWithPath(self, Order, canSave):
@@ -340,6 +350,7 @@ class Traitement:
         img_Fermee = self.Dilatation(self.Erosion(img, Order, False), Order, False)
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Fermee.png", img_Fermee)
+        imshow(img_Fermee)
         return img_Fermee
 
     def Fermeture(self, img, Order, canSave):
@@ -347,6 +358,7 @@ class Traitement:
         img_Fermee = self.Dilatation(self.Erosion(img, Order, False), Order, False)
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Fermee.png", img_Fermee)
+        imshow(img_Fermee)
         return img_Fermee
 
     def Amincissement(self):
