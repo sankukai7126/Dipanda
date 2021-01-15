@@ -41,7 +41,6 @@ class Traitement:
                     img_thres[y][x] = 0
                 else:
                     img_thres[y][x] = 255
-        imshow(img_thres)
         return img_thres
 
     def imgSum(self,img1, img2, imgPath):
