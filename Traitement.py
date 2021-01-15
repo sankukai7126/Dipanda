@@ -4,7 +4,9 @@ from cv2 import *
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-
+import cv2
+from PIL import Image
+from PIL import ImageTk
 class Traitement:
 
     cheminFichierPrincipal = ""
@@ -21,10 +23,8 @@ class Traitement:
     def OpenPath(self,path):
         return imread(path)
 
-    def convertToGray(self,img, imgPath):
+    def convertToGray(self,img):
         img = np.dot(img[...,:3], [0.299, 0.587, 0.114])
-        imwrite(os.path.dirname(imgPath) + "/gray.png", img)
-        imshow(img)
         return img
 
     def Seuillage(self,img, val_seuil):
@@ -60,7 +60,11 @@ class Traitement:
                     else:
                         img_sum[y][x] = 0
             imwrite(os.path.dirname(imgPath) + "/sum.png", img_sum)
-            imshow("Addition", img_sum)
+            #imshow("Addition", img_sum)
+            imS = cv2.resize(img_sum, (300, 300),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
+            cv2.imshow("Sum", imS)
+
+
             return img_sum
         else:
             print("Veuiller prendre deux images de même taille")
@@ -81,7 +85,11 @@ class Traitement:
                     else:
                         img_soust[y][x] = 255
             imwrite(os.path.dirname(imgPath) + "/soust.png", img_soust)
-            imshow("Soustraction", img_soust)
+            #imshow("Soustraction", img_soust)
+
+            imS = cv2.resize(img_soust, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
+            cv2.imshow("sous", imS)
+
             return img_soust
         else:
             print("Veuiller prendre deux images de même taille")
@@ -144,7 +152,9 @@ class Traitement:
                     pass
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Erode.png", ero)
-        imshow("Erosion",ero)
+        #imshow("Erosion",ero)
+        imS = cv2.resize(ero, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
+        cv2.imshow("Erosion", imS)
         return ero
     
     def Erosion(self, im, erodeOrder, canSave):
@@ -204,7 +214,9 @@ class Traitement:
                     pass
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Erode.png", ero)
-        imshow("Erosion",ero)
+        #imshow("Erosion",ero)
+        imS = cv2.resize(ero, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
+        cv2.imshow("Erosion", imS)
         return ero
 
     def DilatationWithPath(self,dilateOrder, canSave):
@@ -266,7 +278,9 @@ class Traitement:
                     pass
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Dilate.png", dil)
-        imshow("Dilatation",dil)
+        #imshow("Dilatation",dil)
+        imS = cv2.resize(dil, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
+        cv2.imshow("Dilatation", imS)
         return dil
     
     def Dilatation(self, im, dilateOrder, canSave):
@@ -327,41 +341,54 @@ class Traitement:
                     pass
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Dilate.png", dil)
-        imshow("Dilatation",dil)
+        #imshow("Dilatation",dil)
+        imS = cv2.resize(dil, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
+        cv2.imshow("Dilatation", imS)
         return dil
 
-    def OuvertureWithPath(self, Order, canSave):
-        imgPath = self.getCheminPrincipale()
-        img=self.OpenPath(imgPath)
-        img_Ouverte = self.Erosion(self.Dilatation(img, Order, False), Order, False)
-        if canSave == True:
-            imwrite(os.path.dirname(imgPath) + "/Ouverte.png", img_Ouverte)
-        imshow("Ouverture",img_Ouverte)
-        return img_Ouverte
-    
-    def Ouverture(self, img, Order, canSave):
-        imgPath = self.getCheminPrincipale()
-        img_Ouverte = self.Erosion(self.Dilatation(img, Order, False), Order, False)
-        if canSave == True:
-            imwrite(os.path.dirname(imgPath) + "/Ouverte.png", img_Ouverte)
-        imshow("Ouverture",img_Ouverte)
-        return img_Ouverte
 
     def FermetureWithPath(self, Order, canSave):
         imgPath = self.getCheminPrincipale()
         img=self.OpenPath(imgPath)
+        img_Ouverte = self.Erosion(self.Dilatation(img, Order, False), Order, False)
+        if canSave == True:
+            imwrite(os.path.dirname(imgPath) + "/Ouverte.png", img_Ouverte)
+        #imshow("Ouverture",img_Ouverte)
+        imS = cv2.resize(img_Ouverte, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
+        cv2.imshow("Fermeture", imS)
+        return img_Ouverte
+    
+    def Fermeture(self, img, Order, canSave):
+        imgPath = self.getCheminPrincipale()
+        img_Ouverte = self.Erosion(self.Dilatation(img, Order, False), Order, False)
+        if canSave == True:
+            imwrite(os.path.dirname(imgPath) + "/Ouverte.png", img_Ouverte)
+        #imshow("Ouverture",img_Ouverte)
+        imS = cv2.resize(img_Ouverte, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
+        cv2.imshow("Fermeture", imS)
+        return img_Ouverte
+
+
+    def OuvertureWithPath(self, Order, canSave):
+        imgPath = self.getCheminPrincipale()
+        img=self.OpenPath(imgPath)
         img_Fermee = self.Dilatation(self.Erosion(img, Order, False), Order, False)
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Fermee.png", img_Fermee)
-        imshow("Fermeture",img_Fermee)
+        #imshow("Fermeture",img_Fermee)
+        imS = cv2.resize(img_Fermee, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
+        cv2.imshow("Ouverture", imS)
         return img_Fermee
 
-    def Fermeture(self, img, Order, canSave):
+
+    def Ouverture(self, img, Order, canSave):
         imgPath = self.getCheminPrincipale()
         img_Fermee = self.Dilatation(self.Erosion(img, Order, False), Order, False)
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Fermee.png", img_Fermee)
-        imshow("Fermeture",img_Fermee)
+        #imshow("Fermeture",img_Fermee)
+        imS = cv2.resize(img_Fermee, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
+        cv2.imshow("Ouverture", imS)
         return img_Fermee
 
     def Amincissement(self):

@@ -3,14 +3,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tkinter import *
 from tkinter.ttk import *
+from cv2 import *
+import cv2
+from PIL import Image
+from PIL import ImageTk
 
 def loadPicture(filename,Frame3):
     displayer = Canvas(Frame3,width=400,height=400)
     displayer.grid(column=0, row=0,padx=(0, 10),pady=(10,10))
 
-    #load a test picture
-    img = PhotoImage(file=filename)
-    displayer.create_image(40,40,anchor=NW,image=img)
+    img = Image.open(filename)
+    img = img.resize((300,300), Image.ANTIALIAS)
+    photoImg =  ImageTk.PhotoImage(img)
+
+    displayer.create_image(40,40,anchor=NW,image=photoImg)
     print("loading image")
     Mafenetre.mainloop()  
 
@@ -21,6 +27,20 @@ def askopenfile(t,Frame3):
     t.setCheminPrincipale(filename)
     print(filename)
     loadPicture(filename,Frame3)
+
+def askopenFileSum(t):
+    from tkinter.filedialog import askopenfilename
+    Tk().withdraw() 
+    filename = askopenfilename()
+    print(filename)
+    t.imgSum(imread(t.getCheminPrincipale()),imread(filename),t.getCheminPrincipale())
+
+def askopenFileSustraction(t):
+    from tkinter.filedialog import askopenfilename
+    Tk().withdraw() 
+    filename = askopenfilename()
+    print(filename)
+    t.imgSoust(imread(t.getCheminPrincipale()),imread(filename),t.getCheminPrincipale())
 
 if __name__=='__main__':
     
@@ -44,12 +64,15 @@ if __name__=='__main__':
     Frame3.pack(side=TOP, padx=10, pady=10)
 
     #elements
-    Bouton1 = Button(Frame1, text = 'sum', command = lambda: t.imgSum)
-    Bouton2 = Button(Frame1, text = 'sous', command = lambda: t.imgSoust)
+    Bouton1 = Button(Frame1, text = 'sum', command = lambda: askopenFileSum(t))
+    Bouton2 = Button(Frame1, text = 'sous', command = lambda: askopenFileSustraction(t))
     Bouton3 = Button(Frame1, text = 'erosion', command = lambda: t.ErosionWithPath(3,True))
     Bouton4 = Button(Frame1, text = 'dilatation', command = lambda: t.DilatationWithPath(3,True))
     Bouton5 = Button(Frame1, text = 'ouverture', command = lambda: t.OuvertureWithPath(3,True))
     Bouton6 = Button(Frame1, text = 'fermeture', command = lambda: t.FermetureWithPath(3,True))
+    Bouton7 = Button(Frame1, text = 'epaisissement', command = lambda: t.Epaisissement)
+    Bouton8 = Button(Frame1, text = 'amincissement', command = lambda: t.Amincissement)
+
 
     Bouton1.grid(column=0, row=0,padx=(0, 10),pady=(10,10))
     Bouton2.grid(column=1, row=0,padx=(0, 10),pady=(10,10))
@@ -57,6 +80,9 @@ if __name__=='__main__':
     Bouton4.grid(column=3, row=0,padx=(0, 10),pady=(10,10))
     Bouton5.grid(column=4, row=0,padx=(0, 10),pady=(10,10))
     Bouton6.grid(column=5, row=0,padx=(0, 10),pady=(10,10))
+    Bouton7.grid(column=6, row=0,padx=(0, 10),pady=(10,10))
+    Bouton8.grid(column=7, row=0,padx=(0, 10),pady=(10,10))
+
 
     search = Button(Frame2, text='Browse', command= lambda: askopenfile(t,Frame3))
     search.grid(column=0, row=0,padx=(0, 10),pady=(10,10))
