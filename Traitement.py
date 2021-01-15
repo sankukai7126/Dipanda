@@ -23,8 +23,6 @@ class Traitement:
 
     def convertToGray(self,img, imgPath):
         img = np.dot(img[...,:3], [0.299, 0.587, 0.114])
-        imwrite(os.path.dirname(imgPath) + "/gray.png", img)
-        imshow(img)
         return img
 
     def Seuillage(self,img, val_seuil):
@@ -41,7 +39,6 @@ class Traitement:
                     img_thres[y][x] = 0
                 else:
                     img_thres[y][x] = 255
-        imshow(img_thres)
         return img_thres
 
     def imgSum(self,img1, img2, imgPath):

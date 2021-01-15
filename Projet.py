@@ -8,12 +8,11 @@ import math
 def OpenPath(path):
     return imread(path)
 
-def convertToGray(img, imgPath):
+def convertToGray(img):
     img = np.dot(img[...,:3], [0.2989, 0.5870, 0.1140])
-    imwrite(os.path.dirname(imgPath) + "/gray.png", img)
     return img
 
-def seuil(img,imgPath, val_seuil):
+def seuil(img, val_seuil):
     h = img.shape[0]
     w = img.shape[1]
 
@@ -27,16 +26,15 @@ def seuil(img,imgPath, val_seuil):
                 img_thres[y][x] = 0
             else:
                 img_thres[y][x] = 255
-    imwrite(os.path.dirname(imgPath) + "/seuil.png", img_thres)
     return img_thres
 
-def imgSum(img1, img2, imgPath):
+def imgSum(img1, img2):
     h = img1.shape[0]
     w = img1.shape[1]
     h2 = img2.shape[0]
     w2 = img2.shape[1]
-    img1=convertToGray(img1,imgPath)
-    img2=convertToGray(img2,imgPath)
+    img1=convertToGray(img1)
+    img2=convertToGray(img2)
     if h==h2 and w==w2:
         img_sum= np.zeros((h,w))
         for y in range(0, h):
@@ -45,18 +43,17 @@ def imgSum(img1, img2, imgPath):
                     img_sum[y][x] = 255
                 else:
                     img_sum[y][x] = 0
-        imwrite(os.path.dirname(imgPath) + "/sum.png", img_sum)
         return img_sum
     else:
         print("Veuiller prendre deux images de même taille")
 
-def imgSoust(img1, img2, imgPath):
+def imgSoust(img1, img2):
     h = img1.shape[0]
     w = img1.shape[1]
     h2 = img2.shape[0]
     w2 = img2.shape[1]
-    img1=convertToGray(img1,imgPath)
-    img2=convertToGray(img2,imgPath)
+    img1=convertToGray(img1)
+    img2=convertToGray(img2)
     if h==h2 and w==w2:
         img_soust= np.zeros((h,w))
         for y in range(0, h):
@@ -65,13 +62,12 @@ def imgSoust(img1, img2, imgPath):
                     img_soust[y][x] = 0
                 else:
                     img_soust[y][x] = 255
-        imwrite(os.path.dirname(imgPath) + "/Soust.png", img_soust)
         return img_soust
     else:
         print("Veuiller prendre deux images de même taille")
 
-def Erosion(im, erodeOrder, imgPath):
-
+def Erosion(im, erodeOrder):
+    
     se=np.zeros((erodeOrder,erodeOrder))
     for i in range(erodeOrder):
         for j in range(erodeOrder):
@@ -138,11 +134,10 @@ def Erosion(im, erodeOrder, imgPath):
                 #Miss
                 miss=miss+1
                 pass
-    imwrite(os.path.dirname(imgPath) + "/erode.png", ero)
     return ero
 
-def Dilatation(im, dilateOrder, imgPath):
-
+def Dilatation(im, dilateOrder):
+    
     se=np.zeros((dilateOrder,dilateOrder))
     for i in range(dilateOrder):
         for j in range(dilateOrder):
@@ -210,21 +205,34 @@ def Dilatation(im, dilateOrder, imgPath):
                 #Miss
                 miss=miss+1
                 pass
-    imwrite(os.path.dirname(imgPath) + "/dilate.png", dil)
     return dil
 
-def Ouverture(img, Order, imgPath):
-    img_Ouverte = Erosion(Dilatation(img, Order, imgPath), Order, imgPath)
-    imwrite(os.path.dirname(imgPath) + "/Ouverte.png", img_Ouverte)
+def Ouverture(img, Order):
+    img_Ouverte = Dilatation(Erosion(img, Order), Order)
     return img_Ouverte
 
-def Fermeture(img, Order, imgPath):
-    img_Fermee = Dilatation(Erosion(img, Order, imgPath), Order, imgPath)
-    imwrite(os.path.dirname(imgPath) + "/Fermee.png", img_Fermee)
+def Fermeture(img, Order):
+    img_Fermee = Erosion(Dilatation(img, Order), Order)
     return img_Fermee
 
 def Amincissement():
-    pass
+    img = imread("D:/VS/Dipanda/Carre.png")
+    img1 = img.copy()
+
+    thin = np.zeros(img.shape)
+
+    for i in range(10):
+        eroded = Erosion(img1,3)
+        opened = Ouverture(eroded, 3)
+        subset = imgSoust(erode,opened)
+        thin = imgSum(subset,thin)
+        img1 = eroded.copy()
+    
+    imshow("Original", img)
+    imshow("Thinned", thin)
+
+    return thin
+
 
 def Epaisissement():
     pass
@@ -255,6 +263,7 @@ def createWindow():
 if __name__ == "__main__":
     imgPath = "D:/VS/Dipanda/Carre.png"
     img = OpenPath(imgPath)
+    thin = Amincissement()
     # img = convertToGray(img, imgPath)
     # img_seuil = seuil(img, imgPath, 128)
     # print(img_seuil)
