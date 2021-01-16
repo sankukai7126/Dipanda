@@ -66,13 +66,13 @@ if __name__=='__main__':
     #elements
     Bouton1 = Button(Frame1, text = 'sum', command = lambda: askopenFileSum(t))
     Bouton2 = Button(Frame1, text = 'sous', command = lambda: askopenFileSustraction(t))
-    Bouton9 = Button(Frame1, text = 'seuil', command = lambda: t.SeuillageWithPath(128))
     Bouton3 = Button(Frame1, text = 'erosion', command = lambda: t.ErosionWithPath(3,True))
     Bouton4 = Button(Frame1, text = 'dilatation', command = lambda: t.DilatationWithPath(3,True))
     Bouton5 = Button(Frame1, text = 'ouverture', command = lambda: t.OuvertureWithPath(3,True))
     Bouton6 = Button(Frame1, text = 'fermeture', command = lambda: t.FermetureWithPath(3,True))
     Bouton7 = Button(Frame1, text = 'epaisissement', command = lambda: t.Epaisissement())
     Bouton8 = Button(Frame1, text = 'amincissement', command = lambda: t.Amincissement())
+    Bouton9 = Button(Frame1, text = 'seuil', command = lambda: t.SeuillageWithPath(128))
     Bouton10 = Button(Frame1, text = 'lantuejoul', command = lambda: t.Lantuejoul())
 
 

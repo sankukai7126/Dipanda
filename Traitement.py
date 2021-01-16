@@ -35,10 +35,9 @@ class Traitement:
         w = img.shape[1]
 
         img_thres= np.zeros((h,w))
-        # loop over the image, pixel by pixel
+        
         for y in range(0, h):
             for x in range(0, w):
-                # threshold the pixel
                 pixel = img[y][x]
                 if pixel < val_seuil:
                     img_thres[y][x] = 0
@@ -53,10 +52,8 @@ class Traitement:
         w = img.shape[1]
 
         img_thres= np.zeros((h,w))
-        # loop over the image, pixel by pixel
         for y in range(0, h):
             for x in range(0, w):
-                # threshold the pixel
                 pixel = img[y][x]
                 if pixel < val_seuil:
                     img_thres[y][x] = 0
@@ -127,33 +124,25 @@ class Traitement:
 
         rows,columns = im.shape[0], im.shape[1]
 
-        #Create a copy of the image to modified it´s pixel values
         ero = np.copy(im)
-        #Specify kernel size (w*w)
         w = erodeOrder
         # w=3
 
         #
         for i in range(rows-w-1):
             for j in range(columns-w-1):
-                #Get a region (crop) of the image equal to kernel size
                 crop = im[i:w+i,j:w+j]
-                #Convert region of image to an array
                 img = np.array(crop)
 
-                #Get center
                 a = math.floor(w/2)
                 b = math.floor(w/2)
                 
-                #Initialize counters 
                 matches = 0
                 blacks = 0
 
                 blacks = np.count_nonzero(img == 0)
                 matches = np.count_nonzero((img == 0) & (se == 0))
 
-                #Test if structuring element fit crop image pixels
-                #If fit it does nothing because center pixel is already black
                 if(matches > 0):
                     if(matches < blacks):
                         ero[i+a][j+b] = 0
@@ -173,33 +162,25 @@ class Traitement:
 
         rows,columns = im.shape[0], im.shape[1]
 
-        #Create a copy of the image to modified it´s pixel values
         ero = np.copy(im)
-        #Specify kernel size (w*w)
         w = erodeOrder
         # w=3
 
         #
         for i in range(rows-w-1):
             for j in range(columns-w-1):
-                #Get a region (crop) of the image equal to kernel size
                 crop = im[i:w+i,j:w+j]
-                #Convert region of image to an array
                 img = np.array(crop)
 
-                #Get center
                 a = math.floor(w/2)
                 b = math.floor(w/2)
                 
-                #Initialize counters 
                 matches = 0
                 blacks = 0
 
                 blacks = np.count_nonzero(img == 0)
                 matches = np.count_nonzero((img == 0) & (se == 0))
 
-                #Test if structuring element fit crop image pixels
-                #If fit it does nothing because center pixel is already black
                 if(matches > 0):
                     if(matches < blacks):
                         ero[i+a][j+b] = 0
@@ -220,9 +201,7 @@ class Traitement:
 
         rows,columns = im.shape[0], im.shape[1]
 
-        #Create a copy of the image to modified it´s pixel values
         dil = np.copy(im)
-        #Specify kernel size (w*w)
         w = dilateOrder
         # w = 3
 
@@ -230,24 +209,18 @@ class Traitement:
         #
         for i in range(rows-w-1):
             for j in range(columns-w-1):
-                #Get a region (crop) of the image equal to kernel size
                 crop = im[i:w+i,j:w+j]
-                #Convert region of image to an array
                 img = np.array(crop)
 
-                #Get center
                 a = math.floor(w/2)
                 b = math.floor(w/2)
                 
-                #Initialize counters 
                 matches = 0
                 blacks = 0
 
                 blacks = np.count_nonzero(img == 0)
                 matches = np.count_nonzero((img == 0) & (se == 0))
 
-                #Test if structuring element fit crop image pixels
-                #If fit it does nothing because center pixel is already black
                 if(matches > 0):
                     if(matches < blacks):
                         dil[i+a][j+b] = np.any(img[se==255]) * 255
