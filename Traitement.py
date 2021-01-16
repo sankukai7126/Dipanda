@@ -46,6 +46,26 @@ class Traitement:
                     img_thres[y][x] = 255
         return img_thres
 
+    def SeuillageWithPath(self, val_seuil):
+        img = self.OpenPath(self.getCheminPrincipale())
+        img = self.convertToGray(img)
+        h = img.shape[0]
+        w = img.shape[1]
+
+        img_thres= np.zeros((h,w))
+        # loop over the image, pixel by pixel
+        for y in range(0, h):
+            for x in range(0, w):
+                # threshold the pixel
+                pixel = img[y][x]
+                if pixel < val_seuil:
+                    img_thres[y][x] = 0
+                else:
+                    img_thres[y][x] = 255
+        imS = cv2.resize(img_thres, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
+        cv2.imshow("Fermeture", imS)
+        return img_thres
+
     def imgSum(self,img1, img2, CanSave):
         img1=self.convertToGray(img1)
         img2=self.convertToGray(img2)
@@ -332,29 +352,51 @@ class Traitement:
         img = self.OpenPath(self.getCheminPrincipale())
         img1 = img.copy()
 
-        thin = np.zeros(img.shape)
+        lant = np.zeros(img.shape)
+           
+        erodee = self.Erosion(img1,3,True)
+        erodee = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/Erode.png"))
+        ouverte = self.Ouverture(erodee, 3,True)
+        ouverte = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/Ouverte.png"))
+        soustraction = self.imgSoust(erodee,ouverte,True)
+        soustraction = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/soust.png"))
+        lant = self.imgSum(soustraction,lant, True)
+        lant = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/sum.png"))
+        img1 = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/Erode.png"))
+        
+        imgS = cv2.resize(img, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
+        cv2.imshow("Original", imgS)
+        lantS = cv2.resize(lant, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
+        cv2.imshow("Thinning", lantS)
 
-        for i in range(10):            
+        return lant
+
+    def Epaisissement(self):
+        pass
+
+    def Lantuejoul(self):
+        img = self.OpenPath(self.getCheminPrincipale())
+        img1 = img.copy()
+
+        lant = np.zeros(img.shape)
+
+        for i in range(50):            
             erodee = self.Erosion(img1,3,True)
             erodee = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/Erode.png"))
             ouverte = self.Ouverture(erodee, 3,True)
             ouverte = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/Ouverte.png"))
             soustraction = self.imgSoust(erodee,ouverte,True)
             soustraction = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/soust.png"))
-            thin = self.imgSum(soustraction,thin, True)
-            thin = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/sum.png"))
+            lant = self.imgSum(soustraction,lant, True)
+            lant = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/sum.png"))
             img1 = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/Erode.png"))
         
-        imshow("Original", img)
-        imshow("Thinned", thin)
+        imgS = cv2.resize(img, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
+        cv2.imshow("Original", imgS)
+        lantS = cv2.resize(lant, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
+        cv2.imshow("Thinning", lantS)
 
-        return thin
-
-    def Epaisissement(self):
-        pass
-
-    def Lantuejoul(self,img, Order, imgPath):
-        pass
+        return lant
 
     def test(self):
         print("coucou")
