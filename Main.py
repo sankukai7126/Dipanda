@@ -33,14 +33,14 @@ def askopenFileSum(t):
     Tk().withdraw() 
     filename = askopenfilename()
     print(filename)
-    t.imgSum(imread(t.getCheminPrincipale()),imread(filename),t.getCheminPrincipale())
+    t.imgSum(imread(t.getCheminPrincipale()),imread(filename),True)
 
 def askopenFileSustraction(t):
     from tkinter.filedialog import askopenfilename
     Tk().withdraw() 
     filename = askopenfilename()
     print(filename)
-    t.imgSoust(imread(t.getCheminPrincipale()),imread(filename),t.getCheminPrincipale())
+    t.imgSoust(imread(t.getCheminPrincipale()),imread(filename),True)
 
 if __name__=='__main__':
     
@@ -70,8 +70,8 @@ if __name__=='__main__':
     Bouton4 = Button(Frame1, text = 'dilatation', command = lambda: t.DilatationWithPath(3,True))
     Bouton5 = Button(Frame1, text = 'ouverture', command = lambda: t.OuvertureWithPath(3,True))
     Bouton6 = Button(Frame1, text = 'fermeture', command = lambda: t.FermetureWithPath(3,True))
-    Bouton7 = Button(Frame1, text = 'epaisissement', command = lambda: t.Epaisissement)
-    Bouton8 = Button(Frame1, text = 'amincissement', command = lambda: t.Amincissement)
+    Bouton7 = Button(Frame1, text = 'epaisissement', command = lambda: t.Epaisissement())
+    Bouton8 = Button(Frame1, text = 'amincissement', command = lambda: t.Amincissement())
 
 
     Bouton1.grid(column=0, row=0,padx=(0, 10),pady=(10,10))

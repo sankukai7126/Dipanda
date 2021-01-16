@@ -24,7 +24,9 @@ class Traitement:
         return imread(path)
 
     def convertToGray(self,img):
-        img = np.dot(img[...,:3], [0.299, 0.587, 0.114])
+        img = np.array(img)
+        # img = np.dot(img[...,:3], [0.299, 0.587, 0.114])
+        img = cvtColor(img, COLOR_BGR2GRAY)
         return img
 
     def Seuillage(self,img, val_seuil):
@@ -43,13 +45,13 @@ class Traitement:
                     img_thres[y][x] = 255
         return img_thres
 
-    def imgSum(self,img1, img2, imgPath):
+    def imgSum(self,img1, img2, CanSave):
+        img1=self.convertToGray(img1)
+        img2=self.convertToGray(img2)
         h = img1.shape[0]
         w = img1.shape[1]
         h2 = img2.shape[0]
         w2 = img2.shape[1]
-        img1=self.convertToGray(img1)
-        img2=self.convertToGray(img2)
         if h==h2 and w==w2:
             img_sum= np.zeros((h,w))
             for y in range(0, h):
@@ -58,7 +60,8 @@ class Traitement:
                         img_sum[y][x] = 255
                     else:
                         img_sum[y][x] = 0
-            imwrite(os.path.dirname(imgPath) + "/sum.png", img_sum)
+            if CanSave == True:
+                imwrite(os.path.dirname(self.getCheminPrincipale()) + "/sum.png", img_sum)
             #imshow("Addition", img_sum)
             imS = cv2.resize(img_sum, (300, 300),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
             cv2.imshow("Sum", imS)
@@ -68,13 +71,13 @@ class Traitement:
         else:
             print("Veuiller prendre deux images de même taille")
 
-    def imgSoust(self,img1, img2, imgPath):
+    def imgSoust(self,img1, img2, CanSave):
+        img1=self.convertToGray(img1)
+        img2=self.convertToGray(img2)
         h = img1.shape[0]
         w = img1.shape[1]
         h2 = img2.shape[0]
         w2 = img2.shape[1]
-        img1=self.convertToGray(img1)
-        img2=self.convertToGray(img2)
         if h==h2 and w==w2:
             img_soust= np.zeros((h,w))
             for y in range(0, h):
@@ -83,7 +86,8 @@ class Traitement:
                         img_soust[y][x] = 0
                     else:
                         img_soust[y][x] = 255
-            imwrite(os.path.dirname(imgPath) + "/soust.png", img_soust)
+            if CanSave == True:
+                imwrite(os.path.dirname(self.getCheminPrincipale()) + "/soust.png", img_soust)
             #imshow("Soustraction", img_soust)
 
             imS = cv2.resize(img_soust, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
@@ -101,10 +105,6 @@ class Traitement:
         se=getStructuringElement(MORPH_ELLIPSE,(erodeOrder,erodeOrder)) * 255
 
         rows,columns = im.shape[0], im.shape[1]
-        #Initialize counters (Just to keep track)
-        fit = 0
-        hit = 0
-        miss = 0
 
         #Create a copy of the image to modified it´s pixel values
         ero = np.copy(im)
@@ -134,21 +134,9 @@ class Traitement:
                 #Test if structuring element fit crop image pixels
                 #If fit it does nothing because center pixel is already black
                 if(matches > 0):
-                    if(matches == blacks):
-                        #Touch
-                        fit = fit + 1
-                        pass
-                    #Test if structuring element hit crop image pixels
-                    #If hit change ero center pixel to black
-                    elif(matches < blacks):
-                        #Hit
-                        hit = hit+1
+                    if(matches < blacks):
                         ero[i+a][j+b] = 0
-                #If no pixel match just pass
-                else:
-                    #Miss
-                    miss=miss+1
-                    pass
+
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Erode.png", ero)
         #imshow("Erosion",ero)
@@ -163,10 +151,6 @@ class Traitement:
         se=getStructuringElement(MORPH_ELLIPSE,(erodeOrder,erodeOrder)) * 255
 
         rows,columns = im.shape[0], im.shape[1]
-        #Initialize counters (Just to keep track)
-        fit = 0
-        hit = 0
-        miss = 0
 
         #Create a copy of the image to modified it´s pixel values
         ero = np.copy(im)
@@ -196,21 +180,9 @@ class Traitement:
                 #Test if structuring element fit crop image pixels
                 #If fit it does nothing because center pixel is already black
                 if(matches > 0):
-                    if(matches == blacks):
-                        #Touch
-                        fit = fit + 1
-                        pass
-                    #Test if structuring element hit crop image pixels
-                    #If hit change ero center pixel to black
-                    elif(matches < blacks):
-                        #Hit
-                        hit = hit+1
+                    if(matches < blacks):
                         ero[i+a][j+b] = 0
-                #If no pixel match just pass
-                else:
-                    #Miss
-                    miss=miss+1
-                    pass
+
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Erode.png", ero)
         #imshow("Erosion",ero)
@@ -226,10 +198,6 @@ class Traitement:
         se=getStructuringElement(MORPH_ELLIPSE,(dilateOrder,dilateOrder)) * 255
 
         rows,columns = im.shape[0], im.shape[1]
-        #Initialize counters (Just to keep track)
-        fit = 0
-        hit = 0
-        miss = 0
 
         #Create a copy of the image to modified it´s pixel values
         dil = np.copy(im)
@@ -260,21 +228,9 @@ class Traitement:
                 #Test if structuring element fit crop image pixels
                 #If fit it does nothing because center pixel is already black
                 if(matches > 0):
-                    if(matches == blacks):
-                        #Touch
-                        fit = fit + 1
-                        pass
-                    #Test if structuring element hit crop image pixels
-                    #If hit change ero center pixel to black
-                    elif(matches < blacks):
-                        #Hit
-                        hit = hit+1
+                    if(matches < blacks):
                         dil[i+a][j+b] = np.any(img[se==255]) * 255
-                #If no pixel match just pass
-                else:
-                    #Miss
-                    miss=miss+1
-                    pass
+
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Dilate.png", dil)
         #imshow("Dilatation",dil)
@@ -289,55 +245,36 @@ class Traitement:
         se=getStructuringElement(MORPH_ELLIPSE,(dilateOrder,dilateOrder)) * 255
 
         rows,columns = im.shape[0], im.shape[1]
-        #Initialize counters (Just to keep track)
-        fit = 0
-        hit = 0
-        miss = 0
 
-        #Create a copy of the image to modified it´s pixel values
+        #On prend une copie de l'image
         dil = np.copy(im)
-        #Specify kernel size (w*w)
+        #On specifie la taille de l'élément structurant
         w = dilateOrder
         # w = 3
 
-
-        #
         for i in range(rows-w-1):
             for j in range(columns-w-1):
-                #Get a region (crop) of the image equal to kernel size
+                #On prend une partie de l'image
                 crop = im[i:w+i,j:w+j]
-                #Convert region of image to an array
+                #On cette partie d'image en tableau
                 img = np.array(crop)
 
-                #Get center
+                #On recupere le centre du morceau d'image
                 a = math.floor(w/2)
                 b = math.floor(w/2)
                 
-                #Initialize counters 
+                #On initialise des compteurs pour recuperer le nombre de case noire et si les cases correspondent
                 matches = 0
                 blacks = 0
 
                 blacks = np.count_nonzero(img == 0)
                 matches = np.count_nonzero((img == 0) & (se == 0))
 
-                #Test if structuring element fit crop image pixels
-                #If fit it does nothing because center pixel is already black
+                #On test si l'element structurant correspond a la section couper
                 if(matches > 0):
-                    if(matches == blacks):
-                        #Touch
-                        fit = fit + 1
-                        pass
-                    #Test if structuring element hit crop image pixels
-                    #If hit change ero center pixel to black
-                    elif(matches < blacks):
-                        #Hit
-                        hit = hit+1
+                    if(matches < blacks):
                         dil[i+a][j+b] = np.any(img[se==255]) * 255
-                #If no pixel match just pass
-                else:
-                    #Miss
-                    miss=miss+1
-                    pass
+
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Dilate.png", dil)
         #imshow("Dilatation",dil)
@@ -391,7 +328,32 @@ class Traitement:
         return img_Fermee
 
     def Amincissement(self):
-        pass
+        img = self.OpenPath(self.getCheminPrincipale())
+        img1 = img
+
+        thin = np.zeros(img.shape)
+        print("img1 Shape : ")
+        print(img1.shape)
+        print("thin Shape : ")
+        print(thin.shape)
+
+        for i in range(10):
+            eroded = self.Erosion(img1,3,False)
+            print("eroded Shape : ")
+            print(eroded.shape)
+            print(eroded)
+            opened = self.Ouverture(eroded, 3,False)
+            print("opened Shape : ")
+            print(opened.shape)
+            print(opened)
+            subset = self.imgSoust(erode,opened,False)
+            # thin = self.imgSum(subset,thin, False)
+            # img1 = self.eroded.copy()
+        
+        imshow("Original", img)
+        imshow("Thinned", thin)
+
+        return thin
 
     def Epaisissement(self):
         pass
