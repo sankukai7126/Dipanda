@@ -24,6 +24,7 @@ class Traitement:
         return imread(path)
 
     def convertToGray(self,img):
+        img = np.float32(img)
         img = np.array(img)
         # img = np.dot(img[...,:3], [0.299, 0.587, 0.114])
         img = cvtColor(img, COLOR_BGR2GRAY)
@@ -145,7 +146,7 @@ class Traitement:
         return ero
     
     def Erosion(self, im, erodeOrder, canSave):
-
+        im = np.array(im)
         imgPath = self.getCheminPrincipale()
 
         se=getStructuringElement(MORPH_ELLIPSE,(erodeOrder,erodeOrder)) * 255
@@ -239,7 +240,7 @@ class Traitement:
         return dil
     
     def Dilatation(self, im, dilateOrder, canSave):
-        
+        im = np.array(im)
         imgPath = self.getCheminPrincipale()
 
         se=getStructuringElement(MORPH_ELLIPSE,(dilateOrder,dilateOrder)) * 255
@@ -288,7 +289,7 @@ class Traitement:
         img=self.OpenPath(imgPath)
         img_Ouverte = self.Erosion(self.Dilatation(img, Order, False), Order, False)
         if canSave == True:
-            imwrite(os.path.dirname(imgPath) + "/Ouverte.png", img_Ouverte)
+            imwrite(os.path.dirname(imgPath) + "/Fermee.png", img_Ouverte)
         #imshow("Ouverture",img_Ouverte)
         imS = cv2.resize(img_Ouverte, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
         cv2.imshow("Fermeture", imS)
@@ -298,7 +299,7 @@ class Traitement:
         imgPath = self.getCheminPrincipale()
         img_Ouverte = self.Erosion(self.Dilatation(img, Order, False), Order, False)
         if canSave == True:
-            imwrite(os.path.dirname(imgPath) + "/Ouverte.png", img_Ouverte)
+            imwrite(os.path.dirname(imgPath) + "/Fermee.png", img_Ouverte)
         #imshow("Ouverture",img_Ouverte)
         imS = cv2.resize(img_Ouverte, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
         cv2.imshow("Fermeture", imS)
@@ -310,7 +311,7 @@ class Traitement:
         img=self.OpenPath(imgPath)
         img_Fermee = self.Dilatation(self.Erosion(img, Order, False), Order, False)
         if canSave == True:
-            imwrite(os.path.dirname(imgPath) + "/Fermee.png", img_Fermee)
+            imwrite(os.path.dirname(imgPath) + "/Ouverte.png", img_Fermee)
         #imshow("Fermeture",img_Fermee)
         imS = cv2.resize(img_Fermee, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
         cv2.imshow("Ouverture", imS)
@@ -321,7 +322,7 @@ class Traitement:
         imgPath = self.getCheminPrincipale()
         img_Fermee = self.Dilatation(self.Erosion(img, Order, False), Order, False)
         if canSave == True:
-            imwrite(os.path.dirname(imgPath) + "/Fermee.png", img_Fermee)
+            imwrite(os.path.dirname(imgPath) + "/Ouverte.png", img_Fermee)
         #imshow("Fermeture",img_Fermee)
         imS = cv2.resize(img_Fermee, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
         cv2.imshow("Ouverture", imS)
@@ -329,26 +330,20 @@ class Traitement:
 
     def Amincissement(self):
         img = self.OpenPath(self.getCheminPrincipale())
-        img1 = img
+        img1 = img.copy()
 
         thin = np.zeros(img.shape)
-        print("img1 Shape : ")
-        print(img1.shape)
-        print("thin Shape : ")
-        print(thin.shape)
 
-        for i in range(10):
-            eroded = self.Erosion(img1,3,False)
-            print("eroded Shape : ")
-            print(eroded.shape)
-            print(eroded)
-            opened = self.Ouverture(eroded, 3,False)
-            print("opened Shape : ")
-            print(opened.shape)
-            print(opened)
-            subset = self.imgSoust(erode,opened,False)
-            # thin = self.imgSum(subset,thin, False)
-            # img1 = self.eroded.copy()
+        for i in range(10):            
+            erodee = self.Erosion(img1,3,True)
+            erodee = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/Erode.png"))
+            ouverte = self.Ouverture(erodee, 3,True)
+            ouverte = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/Ouverte.png"))
+            soustraction = self.imgSoust(erodee,ouverte,True)
+            soustraction = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/soust.png"))
+            thin = self.imgSum(soustraction,thin, True)
+            thin = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/sum.png"))
+            img1 = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/Erode.png"))
         
         imshow("Original", img)
         imshow("Thinned", thin)
