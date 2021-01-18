@@ -145,7 +145,7 @@ class Traitement:
 
                 if(matches > 0):
                     if(matches < blacks):
-                        ero[i+a][j+b] = 0
+                        ero[i+a][j+b] = np.all(img[se==255]) * 255
 
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Erode.png", ero)
@@ -183,7 +183,7 @@ class Traitement:
 
                 if(matches > 0):
                     if(matches < blacks):
-                        ero[i+a][j+b] = 0
+                        ero[i+a][j+b] = np.all(img[se==255]) * 255
 
         if canSave == True:
             imwrite(os.path.dirname(imgPath) + "/Erode.png", ero)
@@ -321,28 +321,42 @@ class Traitement:
         cv2.imshow("Ouverture", imS)
         return img_Fermee
 
-    def Amincissement(self):
-        img = self.OpenPath(self.getCheminPrincipale())
-        img1 = img.copy()
+    def Amincissement(self, canSave):
+        imgPath = self.getCheminPrincipale()
+        im = self.OpenPath(imgPath)
+        im = np.array(im)
 
-        lant = np.zeros(img.shape)
-           
-        erodee = self.Erosion(img1,3,True)
-        erodee = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/Erode.png"))
-        ouverte = self.Ouverture(erodee, 3,True)
-        ouverte = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/Ouverte.png"))
-        soustraction = self.imgSoust(erodee,ouverte,True)
-        soustraction = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/soust.png"))
-        lant = self.imgSum(soustraction,lant, True)
-        lant = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/sum.png"))
-        img1 = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/Erode.png"))
-        
-        imgS = cv2.resize(img, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
-        cv2.imshow("Original", imgS)
-        lantS = cv2.resize(lant, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
-        cv2.imshow("Thinning", lantS)
+        se=getStructuringElement(MORPH_ELLIPSE,(3,3)) * 255
 
-        return lant
+        rows,columns = im.shape[0], im.shape[1]
+
+        thinned = np.copy(im)
+        w = 3
+
+        #
+        for i in range(rows-w-1):
+            for j in range(columns-w-1):
+                crop = im[i:w+i,j:w+j]
+                img = np.array(crop)
+
+                a = math.floor(w/2)
+                b = math.floor(w/2)
+                
+                matches = 0
+                blacks = 0
+
+                blacks = np.count_nonzero(img == 0)
+                matches = np.count_nonzero((img == 0) & (se == 0))
+
+                if(matches > 0):
+                    if(matches < blacks):
+                        thinned[i+a][j+b] = 0
+
+        if canSave == True:
+            imwrite(os.path.dirname(imgPath) + "/Amincie.png", thinned)
+        imS = cv2.resize(thinned, (400, 400),fx=0.5, fy=0.5, interpolation = cv2.INTER_AREA)                    # Resize image
+        cv2.imshow("Amincissement", imS)
+        return thinned
 
     def Epaisissement(self):
         pass
@@ -353,7 +367,8 @@ class Traitement:
 
         lant = np.zeros(img.shape)
 
-        for i in range(50):            
+        for i in range(50):
+        # while np.count_nonzero(img1) != 0:
             erodee = self.Erosion(img1,3,True)
             erodee = self.OpenPath((os.path.dirname(self.getCheminPrincipale()) + "/Erode.png"))
             ouverte = self.Ouverture(erodee, 3,True)

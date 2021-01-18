@@ -71,7 +71,7 @@ if __name__=='__main__':
     Bouton5 = Button(Frame1, text = 'ouverture', command = lambda: t.OuvertureWithPath(3,True))
     Bouton6 = Button(Frame1, text = 'fermeture', command = lambda: t.FermetureWithPath(3,True))
     Bouton7 = Button(Frame1, text = 'epaisissement', command = lambda: t.Epaisissement())
-    Bouton8 = Button(Frame1, text = 'amincissement', command = lambda: t.Amincissement())
+    Bouton8 = Button(Frame1, text = 'amincissement', command = lambda: t.Amincissement(True))
     Bouton9 = Button(Frame1, text = 'seuil', command = lambda: t.SeuillageWithPath(128))
     Bouton10 = Button(Frame1, text = 'lantuejoul', command = lambda: t.Lantuejoul())
 
